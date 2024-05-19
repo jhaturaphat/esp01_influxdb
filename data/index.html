@@ -2,11 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Styled Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 700px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        .dev-by{
+            text-align: end;
+        }
+    </style>
 </head>
 <body>
-    <h1>LittleFS OK</h1>
+
+<div class="content">
+    <div class="form-group">
+        <label for="influxdb_url">InfluxDB URL</label>
+        <input type="text" id="influxdb_url">
+    </div>
+    <div class="form-group">
+        <label for="influxdb_token">InfluxDB Token</label>
+        <input type="text" id="influxdb_token">
+    </div>
+    <div class="form-group">
+        <label for="influxdb_org">InfluxDB Org</label>
+        <input type="text" id="influxdb_org">
+    </div>
+    <div class="form-group">
+        <label for="influxdb_bucket">InfluxDB Bucket</label>
+        <input type="text" id="influxdb_bucket">
+    </div>
+    <div class="form-group">
+        <button onclick="sendData()">SAVE</button>
+    </div>
+    <div class="dev-by">
+        <small>พัฒนาโดย KID รพร.เดชอุดม</small>
+    </div>
+</div>
+
 </body>
 </html>
+
+<script>
+    function sendData() {
+        // Get values from the form
+        const influxdb_url = document.getElementById('influxdb_url').value;
+        const influxdb_token = document.getElementById('influxdb_token').value;
+        const influxdb_org = document.getElementById('influxdb_org').value;
+        const influxdb_bucket = document.getElementById('influxdb_bucket').value;
+
+        // Construct the URL with query parameters
+        const url = `/save?influxdb_url=${encodeURIComponent(influxdb_url)}&influxdb_token=${encodeURIComponent(influxdb_token)}&influxdb_org=${encodeURIComponent(influxdb_org)}&influxdb_bucket=${encodeURIComponent(influxdb_bucket)}`;
+
+        // Send GET request to the server
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data here
+                console.log(data);
+                alert('Data sent successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending data.');
+            });
+    }
+</script>

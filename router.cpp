@@ -2,18 +2,6 @@
 
 ESP8266WebServer server(80);
 
-bool LoadFromLittleFS(const char* path, const char* contentType) {
-  File file = LittleFS.open(path, "r");
-  if (!file) {
-    Serial.println("Failed to open file");
-    return false;
-  }
-
-  server.streamFile(file, contentType);
-  file.close();
-  return true;
-}
-
 String readFile(const char *path){  
   File file = LittleFS.open(path, "r");
   if(!file){
@@ -28,49 +16,50 @@ String readFile(const char *path){
   return html;  
 }
 
-void writeFile(const char *path, const char *message) {
-  Serial.printf("Writing file: %s\n", path);
+void handleSave() {
+  if (server.hasArg("influxdb_url") && 
+      server.hasArg("influxdb_token") && 
+      server.hasArg("influxdb_org") && 
+      server.hasArg("influxdb_bucket")) {
 
-  File file = LittleFS.open(path, "w");
-  if (!file) {
-    Serial.println("Failed to open file for writing");
-    return;
-  }
-  if (file.print(message)) {
-    Serial.println("File written");
-  } else {
-    Serial.println("Write failed");
-  }
-  delay(2000);  // Make sure the CREATE and LASTWRITE times are different
-  file.close();
-}
+    String influxdb_url = server.arg("influxdb_url");
+    String influxdb_token = server.arg("influxdb_token");
+    String influxdb_org = server.arg("influxdb_org");
+    String influxdb_bucket = server.arg("influxdb_bucket");
 
-void listDir(const char *dirname) {
-  Serial.printf("Listing directory: %s\n", dirname);
+    // สร้าง JSON object และใส่ข้อมูล
+    DynamicJsonDocument doc(1024);
+    doc["influxdb_url"] = influxdb_url;
+    doc["influxdb_token"] = influxdb_token;
+    doc["influxdb_org"] = influxdb_org;
+    doc["influxdb_bucket"] = influxdb_bucket;
 
-  Dir root = LittleFS.openDir(dirname);
+    // เปิดไฟล์เพื่อเขียนข้อมูล
+    File file = LittleFS.open("/influx.json", "w");
+    if (!file) {
+      String response = "{ \"status\": \"error\", \"message\": \"Failed to open file for writing\" }";
+      server.send(500, "application/json", response);
+      return;
+    }
 
-  while (root.next()) {
-    File file = root.openFile("r");
-    Serial.print("  FILE: ");
-    Serial.print(root.fileName());
-    Serial.print("  SIZE: ");
-    Serial.print(file.size());
-    time_t cr = file.getCreationTime();
-    time_t lw = file.getLastWrite();
+    // เขียน JSON ลงในไฟล์
+    serializeJson(doc, file);
     file.close();
-    struct tm *tmstruct = localtime(&cr);
-    Serial.printf("    CREATION: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
-    tmstruct = localtime(&lw);
-    Serial.printf("  LAST WRITE: %d-%02d-%02d %02d:%02d:%02d\n", (tmstruct->tm_year) + 1900, (tmstruct->tm_mon) + 1, tmstruct->tm_mday, tmstruct->tm_hour, tmstruct->tm_min, tmstruct->tm_sec);
+
+    String response = "{ \"status\": \"success\" }";
+    server.send(200, "application/json", response);
+  } else {
+    String response = "{ \"status\": \"error\", \"message\": \"Missing parameters\" }";
+    server.send(400, "application/json", response);
   }
 }
 
-void handleRoot() { 
-  listDir("/");
-//  writeFile("/index.html", "<h1>1122334455667788</h> ");
-  String html = readFile("/index.html");
-    server.send(200, "text/html", html);
+void handleInflux(){
+  server.send(200, "application/json", readFile("/influx.json"));
+}
+
+void handleRoot() {   
+    server.send(200, "text/html", readFile("/index.html"));
 }
 
 void Router::begin() {
@@ -79,6 +68,8 @@ void Router::begin() {
 //    return;
   }
   server.on("/", handleRoot);
+  server.on("/save", HTTP_GET, handleSave);
+  server.on("/influx.json", HTTP_GET, handleInflux);
   server.begin();
 }
 

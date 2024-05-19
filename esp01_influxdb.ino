@@ -7,6 +7,8 @@
 #endif
 
 #include <WiFiManager.h>
+#include <LittleFS.h>
+#include <ArduinoJson.h>
 #include <InfluxDbClient.h>
 #include <InfluxDbCloud.h>
 #include <Adafruit_Sensor.h>
@@ -18,7 +20,7 @@
 DHT dht(DHTPIN, DHTTYPE);
 
 // InfluxDB client instance
-InfluxDBClient client(INFLUXDB_URL, INFLUXDB_ORG, INFLUXDB_BUCKET, INFLUXDB_TOKEN);
+InfluxDBClient client;
 
 // Data point
 Point sensor("DHT11");
@@ -51,6 +53,9 @@ void setup() {
  
   // Initialize DHT sensor
   dht.begin();
+  // InfluxDB settings
+  loadConfig();
+  client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token);
 
   timeSync(TZ_INFO, "pool.ntp.org", "time.google.com");
 
