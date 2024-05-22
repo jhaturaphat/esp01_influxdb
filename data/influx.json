@@ -1,0 +1,10 @@
+{
+    "influxdb_url": "http://192.168.1.142:8086",
+    "influxdb_token": "DjVqNpgUOYUGFUCkZ4bsV3dnNwjFxfPXpaxMbVBAnhG23KAUsVflZCu4Ge5vT22Q1nreRa0R3FDh48Zwp2knCw==",
+    "influxdb_org": "f6f536a6307c4982",
+    "influxdb_bucket": "DHT11-SENSOR",
+    "line_token":"TftxtM2bfiZkqZjEpIbEURIT3gIDtNLGcwdm82QzwX0",
+    "location":"ทดสอบ",
+    "min_temp": 0,
+    "max_temp": 0
+}

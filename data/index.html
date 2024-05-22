@@ -75,6 +75,23 @@
         <input type="text" id="influxdb_bucket">
     </div>
     <div class="form-group">
+        <label for="line_token">Line Token</label>
+        <input type="text" id="line_token">
+    </div>
+    <div class="form-group">
+        <label for="location">ที่ตั้ง</label>
+        <input type="text" id="location" placeholder="งานคอมพิวเตอร์">
+    </div>
+    <div class="form-group">
+        <label for="min_temp">min temperature</label>
+        <input type="number" id="min_temp" placeholder="2">
+    </div>
+    <div class="form-group">
+        <label for="max_temp">max temperature</label>
+        <input type="number" id="max_temp" placeholder="8">
+    </div>
+    
+    <div class="form-group">
         <button onclick="sendData()">SAVE</button>
     </div>
     <div class="dev-by">
@@ -86,15 +103,45 @@
 </html>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function(xhttp) {
+        const url = "http://192.168.1.143/influx.json";
+        fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('influxdb_url').value = data.influxdb_url;
+            document.getElementById('influxdb_token').value = data.influxdb_token;
+            document.getElementById('influxdb_org').value = data.influxdb_org;
+            document.getElementById('influxdb_bucket').value = data.influxdb_bucket;
+            document.getElementById('location').value = data.location;
+            document.getElementById('line_token').value = data.line_token;
+            document.getElementById('min_temp').value = data.min_temp;
+            document.getElementById('max_temp').value = data.max_temp;
+        })
+        .catch(error => {
+                console.error('Error:', error);
+                alert(error);
+        });
+    });
     function sendData() {
         // Get values from the form
         const influxdb_url = document.getElementById('influxdb_url').value;
         const influxdb_token = document.getElementById('influxdb_token').value;
         const influxdb_org = document.getElementById('influxdb_org').value;
         const influxdb_bucket = document.getElementById('influxdb_bucket').value;
+        const location = document.getElementById('location').value;
+        const line_token = document.getElementById('line_token').value;
+        const min_temp = document.getElementById('min_temp').value;
+        const max_temp = document.getElementById('max_temp').value;
 
         // Construct the URL with query parameters
-        const url = `/save?influxdb_url=${encodeURIComponent(influxdb_url)}&influxdb_token=${encodeURIComponent(influxdb_token)}&influxdb_org=${encodeURIComponent(influxdb_org)}&influxdb_bucket=${encodeURIComponent(influxdb_bucket)}`;
+        const url = `/save?influxdb_url=${encodeURIComponent(influxdb_url)}
+        &influxdb_token=${encodeURIComponent(influxdb_token)}
+        &influxdb_org=${encodeURIComponent(influxdb_org)}
+        &influxdb_bucket=${encodeURIComponent(influxdb_bucket)}
+        &location=${encodeURIComponent(location)}
+        &line_token=${encodeURIComponent(line_token)}
+        &min_temp=${encodeURIComponent(min_temp)}
+        &max_temp=${encodeURIComponent(max_temp)}`;
 
         // Send GET request to the server
         fetch(url)
