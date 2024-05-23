@@ -3,7 +3,6 @@ const char* ssid = "kid_2.4GHz";
 const char* password = "xx3xx3xx";
 
 
-#define TZ_INFO "UTC+7"
 
 // DHT Sensor
 #define DHTPIN 2 //IO02 = D4
@@ -56,6 +55,8 @@ bool loadConfig() {
   influxdb_bucket = strdup(doc["influxdb_bucket"]);
   line_token = strdup(doc["line_token"]);
   location = strdup(doc["location"]);
+  min_temp = doc["min_temp"];
+  max_temp = doc["max_temp"];
 
   return true;
 }

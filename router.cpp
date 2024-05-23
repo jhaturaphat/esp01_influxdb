@@ -85,6 +85,12 @@ void handleRoot() {
     server.send(200, "text/html", readFile("/index.html"));
 }
 
+void handleReboot(){
+  server.send(200, "application/json", "ESP rebooting");
+  delay(1000);
+  ESP.restart();
+}
+
 void Router::begin() {
   if(!LittleFS.begin()){
     Serial.println("An Error has occurred while mounting LittleFS");
@@ -93,6 +99,7 @@ void Router::begin() {
   server.on("/", handleRoot);
   server.on("/save", HTTP_GET, handleSave);
   server.on("/influx.json", HTTP_GET, handleInflux);
+//  server.on("/reboot",HTTP_GET, handleReboot);
   server.begin();
 }
 

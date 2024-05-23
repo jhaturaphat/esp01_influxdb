@@ -94,6 +94,9 @@
     <div class="form-group">
         <button onclick="sendData()">SAVE</button>
     </div>
+    <div class="form-group">
+        <button onclick="reboot()">Reboot</button>
+    </div>
     <div class="dev-by">
         <small>พัฒนาโดย KID รพร.เดชอุดม</small>
     </div>
@@ -154,6 +157,20 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('Error sending data.');
+            });
+    }
+
+    function reboot(){
+        fetch("/reboot")
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response data here
+                console.log(data);
+                alert('Reboot successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error Reboot.');
             });
     }
 </script>

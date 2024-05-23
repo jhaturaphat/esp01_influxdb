@@ -21,8 +21,10 @@
 
 #define TZ_INFO "GMT+7"
 
-unsigned long previousMillis = 0;
-const long interval = 100000; // 15 minutes in milliseconds
+unsigned long previousMillis_1 = 0;
+unsigned long previousMillis_2 = 0;
+const long interval_1 = 60000;       // กำหนด interval เป็น 60 วินาที
+const long interval_2 = 20000;       // กำหนด interval เป็น 20 วินาที
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -43,13 +45,19 @@ Point sensor("DHT11");
 Router router;
 void setup() {
   Serial.begin(115200);
-  if(!LittleFS.begin()) Serial.println("An Error has occurred while mounting LittleFS");
+//  if(!LittleFS.begin()) Serial.println("An Error has occurred while mounting LittleFS");
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  if (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  /*if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Not connected to WiFi. Starting WiFiManager...");
     // เริ่มต้นการตั้งค่า WiFi Manager
     // สร้าง Access Point ชื่อ "AutoConnectAP" (ไม่มีรหัสผ่าน)
     WiFiManager wifiManager;
+//    wifiManager.resetSettings();
     wifiManager.setTimeout(180); 
     if (!wifiManager.autoConnect("AutoConnectAP")) {
       Serial.println("Failed to connect and hit timeout");
@@ -58,7 +66,7 @@ void setup() {
       ESP.restart();
       delay(5000);
     }
-  }
+  }*/
   // เมื่อเชื่อมต่อสำเร็จ จะแสดง IP Address
   Serial.println("Connected!");
   Serial.print("IP Address: ");
@@ -106,30 +114,32 @@ void loop() {
     return;
   }
 
-  // Add data to InfluxDB
+
+  if (currentMillis - previousMillis_1 >= interval_1) {
+    previousMillis_1 = currentMillis;
+    // Add data to InfluxDB
   sensor.clearFields();
   sensor.addField("temperature", temperature);
   sensor.addField("humidity", humidity);
-
-  // Print data to Serial
+    // Print data to Serial
   Serial.print("Temperature: ");
   Serial.print(temperature);
   Serial.print(" °C, Humidity: ");
   Serial.print(humidity);
   Serial.println(" %");
-
   // Write data to InfluxDB
   if (!client.writePoint(sensor)) {
     Serial.print("InfluxDB write failed: ");
     Serial.println(client.getLastErrorMessage());
+    }   
   }
-
-  if (currentMillis - previousMillis >= interval) {
-    previousMillis = currentMillis;
-    checkTemperature();
+  if (currentMillis - previousMillis_2 >= interval_2){
+    previousMillis_2 = currentMillis;
+    checkTime();
+    checkTemperature();    
   }
-  checkTime();
-  delay(10000); // Wait for 30 seconds before sending the next data
+  
+//  delay(30000); // Wait for 30 seconds before sending the next data
 }
 
 void checkTemperature() {
@@ -145,7 +155,7 @@ void checkTemperature() {
 
   // Check if temperature is out of the range 15-23 degrees Celsius
   if (temperature < min_temp || temperature > max_temp) {    
-    LINE.notify(String(location)+"🌡\nอุณหภูมิขณะนี้ \n"+temperature+" องศา \n ความชื้นขณะนี้ "+humidity+" %");
+    LINE.notify(String(location)+"\n🌡 ค่าที่กำหนด"+min_temp+"-"+max_temp+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \n ความชื้นขณะนี้ "+humidity+" %");
   }
 }
 
