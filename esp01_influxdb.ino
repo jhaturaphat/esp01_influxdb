@@ -6,6 +6,8 @@
 #define DEVICE "ESP8266"
 #endif
 
+#include "FS.h"
+#include <LittleFS.h>
 #include <time.h>
 #include <WiFiManager.h>
 #include <LittleFS.h>
@@ -39,24 +41,25 @@ void taskAt0800();
 
 // InfluxDB client instance
 InfluxDBClient client;
-
-// Data point
 Point sensor("DHT11");
+
+WiFiManager wifiManager;
 Router router;
-void setup() {
+void setup() {  
   Serial.begin(115200);
-//  if(!LittleFS.begin()) Serial.println("An Error has occurred while mounting LittleFS");
+//  if(!LittleFS.begin()) Serial.println("LittleFS Mount Failed");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  /*if (WiFi.status() != WL_CONNECTED) {
+
+if (WiFi.status() != WL_CONNECTED) {
     Serial.println("Not connected to WiFi. Starting WiFiManager...");
     // เริ่มต้นการตั้งค่า WiFi Manager
     // สร้าง Access Point ชื่อ "AutoConnectAP" (ไม่มีรหัสผ่าน)
-    WiFiManager wifiManager;
+    
 //    wifiManager.resetSettings();
     wifiManager.setTimeout(180); 
     if (!wifiManager.autoConnect("AutoConnectAP")) {
@@ -66,7 +69,7 @@ void setup() {
       ESP.restart();
       delay(5000);
     }
-  }*/
+  }
   // เมื่อเชื่อมต่อสำเร็จ จะแสดง IP Address
   Serial.println("Connected!");
   Serial.print("IP Address: ");
@@ -85,9 +88,7 @@ void setup() {
   }
   
   dht.begin();
-  // InfluxDB settings
-  loadConfig();
-  client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token);
+  
   LINE.setToken(line_token);
 
   // Check InfluxDB connection
@@ -98,9 +99,11 @@ void setup() {
     Serial.print("InfluxDB connection failed: ");
     Serial.println(client.getLastErrorMessage());
   }
-
-   // Initialize DHT sensor
+   
   router.begin();
+  // InfluxDB settings
+  loadConfig();
+  client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token);
 }
 
 void loop() {
@@ -111,6 +114,11 @@ void loop() {
 
   if (isnan(humidity) || isnan(temperature)) {
     Serial.println("Failed to read from DHT sensor!");
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.print(" °C, Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
     return;
   }
 
@@ -165,13 +173,13 @@ void checkTime() {
   struct tm* timeInfo = localtime(&now);
 
   // Check if the current time matches the target times
-  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && timeInfo->tm_sec == 0) {
+  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && timeInfo->tm_sec >= 0) {
     taskAt1600();
   }
-  if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && timeInfo->tm_sec == 0) {
+  if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && timeInfo->tm_sec >= 0) {
     taskAt0000();
   }
-  if (timeInfo->tm_hour == 8 && timeInfo->tm_min == 0 && timeInfo->tm_sec == 0) {
+  if (timeInfo->tm_hour == 8 && timeInfo->tm_min == 0 && timeInfo->tm_sec >= 0) {
     taskAt0800();
   }
 }

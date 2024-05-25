@@ -92,14 +92,14 @@ void handleReboot(){
 }
 
 void Router::begin() {
-  if(!LittleFS.begin()){
-    Serial.println("An Error has occurred while mounting LittleFS");
-//    return;
+ if(!LittleFS.begin()){
+   Serial.println("An Error has occurred while mounting LittleFS");
+  //    return;
   }
   server.on("/", handleRoot);
   server.on("/save", HTTP_GET, handleSave);
   server.on("/influx.json", HTTP_GET, handleInflux);
-//  server.on("/reboot",HTTP_GET, handleReboot);
+  server.on("/reboot",HTTP_GET, handleReboot);
   server.begin();
 }
 

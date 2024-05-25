@@ -111,6 +111,7 @@
         fetch(url)
         .then(response => response.json())
         .then(data => {
+            console.log(data);
             document.getElementById('influxdb_url').value = data.influxdb_url;
             document.getElementById('influxdb_token').value = data.influxdb_token;
             document.getElementById('influxdb_org').value = data.influxdb_org;
