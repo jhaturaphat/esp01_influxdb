@@ -77,7 +77,7 @@ void handleSave() {
     serializeJson(doc, file);
     file.close();
 
-    String response = "{ \"status\": \"success\" }";
+    String response = "{ \"status\": \"success\", \"message\":\"success\" }";
     server.send(200, "application/json", response);
   } else {
     String response = "{ \"status\": \"error\", \"message\": \"Missing parameters\" }";

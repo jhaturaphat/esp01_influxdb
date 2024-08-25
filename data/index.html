@@ -169,9 +169,10 @@
         // Send GET request to the server
         fetch(url)
             .then(response => response.json())
-            .then(data => {
+            .then(res => {
                 // Handle the response data here
-                console.log(data);                
+                console.log(res);                  
+                alert(res.message);              
             })
             .catch(error => {
                 console.error('Error:', error);

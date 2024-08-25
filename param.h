@@ -6,6 +6,8 @@
 float humidity        = 0.0;
 float temperature     = 0.0;
 
+String logs = "";
+
 char* wifi_ssid       = nullptr;
 char* wifi_password   = nullptr;
 char* influxdb_url    = nullptr;

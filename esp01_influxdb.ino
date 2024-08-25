@@ -119,8 +119,8 @@ void loop() {
   
   if (isnan(humidity) || isnan(temperature)) {
     Serial.println("ไม่พบ sensor DHT!");
-    Serial.println(wifi_ssid);  
-    Serial.println(wifi_password);  
+    // Serial.println(wifi_ssid);  
+    // Serial.println(wifi_password);  
     if (currentMillis - previousMillis_3 >= interval_3) {
       previousMillis_3 = currentMillis;
       LINE.notify(String(location)+" ไม่พบ sensor DHT!");
@@ -137,15 +137,17 @@ void loop() {
   sensor.addField("temperature", temperature);
   sensor.addField("humidity", humidity);
     // Print data to Serial
+    /*
   Serial.print("Temperature: ");
   Serial.print(temperature);
   Serial.print(" °C, Humidity: ");
   Serial.print(humidity);
-  Serial.println(" %");
+  Serial.println(" %");*/
   // Write data to InfluxDB
   if (!client.writePoint(sensor)) {
-    Serial.print("InfluxDB write failed: ");
-    Serial.println(client.getLastErrorMessage());
+    //Serial.print("InfluxDB write failed: ");
+    //Serial.println(client.getLastErrorMessage());
+    logs += "InfluxDB write failed:";    
     }   
   }
   if (currentMillis - previousMillis_2 >= interval_2){
@@ -169,7 +171,7 @@ void startAP(){
 void checkAlarm() { 
     // Check if temperature is out of the range 15-23 degrees Celsius
   if (temperature < min_temp || temperature > max_temp) {    
-    LINE.notify(String(location)+"\n🌡 ค่าที่กำหนด"+min_temp+"-"+max_temp+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \n ความชื้นขณะนี้ "+humidity+" %");
+    LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 ค่าที่กำหนด"+min_temp+"-"+max_temp+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \n ความชื้นขณะนี้ "+humidity+" %");
   }
 }
 
@@ -191,16 +193,16 @@ void checkTime() {
 }
 
 void taskAt1600() {
-  Serial.println("Task at 16:00 executed.");
-  LINE.notify(String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" %");
+  //Serial.println("Task at 16:00 executed.");
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n err:"+logs);
 }
 
 void taskAt0000() {
-  Serial.println("Task at 00:00 executed.");
-  LINE.notify(String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" %");
+  //Serial.println("Task at 00:00 executed.");
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n err:"+logs);
 }
 void taskAt0800() {
-  Serial.println("Task at 08:00 executed.");
-  LINE.notify(String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" %");
+  //Serial.println("Task at 08:00 executed.");
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n err:"+logs);
 }
 
