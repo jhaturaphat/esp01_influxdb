@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #define DEVICE "ESP32"
-#elif defined(ESP8266)
+#elif defined(ESP8266) 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #define DEVICE "ESP8266"
@@ -12,7 +12,6 @@
 #include <LittleFS.h>
 #include <time.h>
 #include <WiFiManager.h>
-#include <LittleFS.h>
 #include <ArduinoJson.h>
 #include <InfluxDbClient.h>
 #include <InfluxDbCloud.h>
@@ -181,13 +180,13 @@ void checkTime() {
   struct tm* timeInfo = localtime(&now);
 
   // ตรวจสอบว่าเวลาปัจจุบันตรงกับเวลาเป้าหมายหรือไม่
-  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && timeInfo->tm_sec >= 0) {
+  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && timeInfo->tm_sec <= 1) {
     taskAt1600();
   }
-  if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && timeInfo->tm_sec >= 0) {
+  if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && timeInfo->tm_sec <= 1) {
     taskAt0000();
   }
-  if (timeInfo->tm_hour == 8 && timeInfo->tm_min == 0 && timeInfo->tm_sec >= 0) {
+  if (timeInfo->tm_hour == 8 && timeInfo->tm_min == 0 && timeInfo->tm_sec <= 1) {
     taskAt0800();
   }
 }
