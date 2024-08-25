@@ -17,31 +17,53 @@ String readFile(const char *path){
 }
 
 void handleSave() {
-  if (server.hasArg("influxdb_url") && 
+  
+  if (server.hasArg("wifi_ssid") &&
+      server.hasArg("wifi_password") &&
+      server.hasArg("influxdb_url") && 
       server.hasArg("influxdb_token") && 
       server.hasArg("influxdb_org") && 
       server.hasArg("influxdb_bucket") &&
-      server.hasArg("line_token")&&
-      server.hasArg("min_temp")&&
+      server.hasArg("line_token") &&
+      server.hasArg("location") &&
+      server.hasArg("min_temp") &&
       server.hasArg("max_temp")) {
 
-    String influxdb_url = server.arg("influxdb_url");
-    String influxdb_token = server.arg("influxdb_token");
-    String influxdb_org = server.arg("influxdb_org");
-    String influxdb_bucket = server.arg("influxdb_bucket");
-    String line_token = server.arg("line_token");
-    String min_temp = server.arg("min_temp");
-    String max_temp = server.arg("max_temp");    
+    String _wifi_ssid        = server.arg("wifi_ssid");
+    String _wifi_password    = server.arg("wifi_password");
+    String _influxdb_url     = server.arg("influxdb_url");
+    String _influxdb_token   = server.arg("influxdb_token");
+    String _influxdb_org     = server.arg("influxdb_org");
+    String _influxdb_bucket  = server.arg("influxdb_bucket");
+    String _line_token       = server.arg("line_token");
+    String _location         = server.arg("location");
+    String _min_temp         = server.arg("min_temp");
+    String _max_temp         = server.arg("max_temp");   
 
+    _wifi_ssid.replace(" ", "");
+    _wifi_password.replace(" ", "");
+    _influxdb_url.replace(" ", "");
+    _influxdb_token.replace(" ", "");
+    _influxdb_org.replace(" ", "");
+    _influxdb_bucket.replace(" ", "");
+    _line_token.replace(" ", "");
+    _location.replace(" ", "");
+    _min_temp.replace(" ", "");
+    _max_temp.replace(" ", "");
+
+    
     // สร้าง JSON object และใส่ข้อมูล
     DynamicJsonDocument doc(1024);
-    doc["influxdb_url"] = influxdb_url;
-    doc["influxdb_token"] = influxdb_token;
-    doc["influxdb_org"] = influxdb_org;
-    doc["influxdb_bucket"] = influxdb_bucket;
-    doc["line_token"] = line_token;
-    doc["min_temp"] = min_temp.toInt();
-    doc["max_temp"] = max_temp.toInt();    
+    doc["wifi_ssid"]        = _wifi_ssid;
+    doc["wifi_password"]    = _wifi_password;
+    doc["influxdb_url"]     = _influxdb_url;
+    doc["influxdb_token"]   = _influxdb_token;
+    doc["influxdb_org"]     = _influxdb_org;
+    doc["influxdb_bucket"]  = _influxdb_bucket;
+    doc["line_token"]       = _line_token;
+    doc["location"]         = _location;
+    doc["min_temp"]         = _min_temp.toInt();
+    doc["max_temp"]         = _max_temp.toInt();    
 
     // เปิดไฟล์เพื่อเขียนข้อมูล
     File file = LittleFS.open("/influx.json", "w");
@@ -63,7 +85,7 @@ void handleSave() {
   }
 }
 
-String chipID() {
+String Router::chipID() {
   String chipID = "ESP_123456";
 #ifdef ARDUINO_ARCH_ESP32  //ถ้าเป็น ESP32
   uint32_t chipId = 0;
@@ -86,16 +108,15 @@ void handleRoot() {
 }
 
 void handleReboot(){
-  server.send(200, "application/json", "ESP rebooting");
-  delay(1000);
+  server.send(200, "application/json", "ESP rebooting");  
   ESP.restart();
 }
 
 void Router::begin() {
- if(!LittleFS.begin()){
-   Serial.println("An Error has occurred while mounting LittleFS");
-  //    return;
-  }
+//  if(!LittleFS.begin()){
+//    Serial.println("An Error has occurred while mounting LittleFS");
+//   //    return;
+//   }
   server.on("/", handleRoot);
   server.on("/save", HTTP_GET, handleSave);
   server.on("/influx.json", HTTP_GET, handleInflux);

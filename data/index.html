@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styled Form</title>
+    <title>KID จตุรภัทร</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,7 +11,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 100%;
             margin: 0;
         }
         .content {
@@ -20,6 +20,7 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 700px;
+            height: 100%;
         }
         .form-group {
             margin-bottom: 15px;
@@ -51,13 +52,22 @@
             background-color: #45a049;
         }
         .dev-by{
-            text-align: end;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-
+    
 <div class="content">
+    <br>
+    <div class="form-group">
+        <label for="wifi_ssid">Wifi SSID</label>
+        <input type="text" id="wifi_ssid">
+    </div>
+    <div class="form-group">
+        <label for="wifi_password">Wifi PASSWORD</label>
+        <input type="text" id="wifi_password">
+    </div>
     <div class="form-group">
         <label for="influxdb_url">InfluxDB URL</label>
         <input type="text" id="influxdb_url">
@@ -100,6 +110,7 @@
     <div class="dev-by">
         <small>พัฒนาโดย KID รพร.เดชอุดม</small>
     </div>
+    <br>
 </div>
 
 </body>
@@ -107,27 +118,33 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function(xhttp) {
-        const url = "http://192.168.1.143/influx.json";
-        fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            document.getElementById('influxdb_url').value = data.influxdb_url;
-            document.getElementById('influxdb_token').value = data.influxdb_token;
-            document.getElementById('influxdb_org').value = data.influxdb_org;
-            document.getElementById('influxdb_bucket').value = data.influxdb_bucket;
-            document.getElementById('location').value = data.location;
-            document.getElementById('line_token').value = data.line_token;
-            document.getElementById('min_temp').value = data.min_temp;
-            document.getElementById('max_temp').value = data.max_temp;
-        })
-        .catch(error => {
-                console.error('Error:', error);
-                alert(error);
-        });
+        const url = "/influx.json";
+        setTimeout(() => {  
+            fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById('wifi_ssid').value = data.wifi_ssid;
+                document.getElementById('wifi_password').value = data.wifi_password;
+                document.getElementById('influxdb_url').value = data.influxdb_url;
+                document.getElementById('influxdb_token').value = data.influxdb_token;
+                document.getElementById('influxdb_org').value = data.influxdb_org;
+                document.getElementById('influxdb_bucket').value = data.influxdb_bucket;
+                document.getElementById('location').value = data.location;
+                document.getElementById('line_token').value = data.line_token;
+                document.getElementById('min_temp').value = data.min_temp;
+                document.getElementById('max_temp').value = data.max_temp;
+            })
+            .catch(error => {
+                    console.error('Error:', error);
+                    alert(error);
+            });
+        }, 1000);
     });
     function sendData() {
         // Get values from the form
+        const wifi_ssid = document.getElementById('wifi_ssid').value;
+        const wifi_password = document.getElementById('wifi_password').value;
         const influxdb_url = document.getElementById('influxdb_url').value;
         const influxdb_token = document.getElementById('influxdb_token').value;
         const influxdb_org = document.getElementById('influxdb_org').value;
@@ -138,26 +155,27 @@
         const max_temp = document.getElementById('max_temp').value;
 
         // Construct the URL with query parameters
-        const url = `/save?influxdb_url=${encodeURIComponent(influxdb_url)}
-        &influxdb_token=${encodeURIComponent(influxdb_token)}
-        &influxdb_org=${encodeURIComponent(influxdb_org)}
-        &influxdb_bucket=${encodeURIComponent(influxdb_bucket)}
-        &location=${encodeURIComponent(location)}
-        &line_token=${encodeURIComponent(line_token)}
-        &min_temp=${encodeURIComponent(min_temp)}
-        &max_temp=${encodeURIComponent(max_temp)}`;
+        const url = `/save?wifi_ssid=${wifi_ssid}
+        &wifi_password=${wifi_password}
+        &influxdb_url=${influxdb_url}
+        &influxdb_token=${influxdb_token}
+        &influxdb_org=${influxdb_org}
+        &influxdb_bucket=${influxdb_bucket}
+        &location=${location}
+        &line_token=${line_token}
+        &min_temp=${min_temp}
+        &max_temp=${max_temp}`;
 
         // Send GET request to the server
         fetch(url)
             .then(response => response.json())
             .then(data => {
                 // Handle the response data here
-                console.log(data);
-                alert('Data sent successfully!');
+                console.log(data);                
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error sending data.');
+                alert(error.message);
             });
     }
 

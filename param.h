@@ -1,24 +1,21 @@
-// WiFi credentials
-const char* ssid = "kid_2.4GHz";
-const char* password = "xx3xx3xx";
-
-
 
 // DHT Sensor
 #define DHTPIN 2 //IO02 = D4
-#define DHTTYPE DHT22
+#define DHTTYPE DHT11
 
-float humidity = 0.0;
-float temperature = 0.0;
+float humidity        = 0.0;
+float temperature     = 0.0;
 
-char* influxdb_url = nullptr;
-char* influxdb_token = nullptr;
-char* influxdb_org = nullptr;
+char* wifi_ssid       = nullptr;
+char* wifi_password   = nullptr;
+char* influxdb_url    = nullptr;
+char* influxdb_token  = nullptr;
+char* influxdb_org    = nullptr;
 char* influxdb_bucket = nullptr;
-char* location = nullptr;
-char* line_token = nullptr;
-int min_temp = 0;
-int max_temp = 0;
+char* location        = nullptr;
+char* line_token      = nullptr;
+int min_temp          = 0;
+int max_temp          = 0;
 
 
 // ฟังก์ชัน trim() เพื่อตัดช่องว่าง
@@ -46,6 +43,7 @@ void trim(char* str) {
 
 // ฟังก์ชันเพื่ออ่านไฟล์และกำหนดค่าตัวแปร
 bool loadConfig() {
+  if(!LittleFS.begin()) Serial.println("LittleFS Mount Failed");
   
   File file = LittleFS.open("/influx.json", "r");
   if (!file) {
@@ -72,32 +70,27 @@ bool loadConfig() {
     return false;
   }
 
-  influxdb_url = strdup(doc["influxdb_url"]);
-  influxdb_token = strdup(doc["influxdb_token"]);
-  influxdb_org = strdup(doc["influxdb_org"]);
+  wifi_ssid       = strdup(doc["wifi_ssid"]);
+  wifi_password   = strdup(doc["wifi_password"]);
+  influxdb_url    = strdup(doc["influxdb_url"]);
+  influxdb_token  = strdup(doc["influxdb_token"]);
+  influxdb_org    = strdup(doc["influxdb_org"]);
   influxdb_bucket = strdup(doc["influxdb_bucket"]);
-  line_token = strdup(doc["line_token"]);
-  location = strdup(doc["location"]);
-  min_temp = doc["min_temp"];
-  max_temp = doc["max_temp"];
+  line_token      = strdup(doc["line_token"]);
+  location        = strdup(doc["location"]);
+  min_temp        = doc["min_temp"];
+  max_temp        = doc["max_temp"];
 
-    // Trim InfluxDB settings
-  trim(influxdb_url);
-  trim(influxdb_token);
-  trim(influxdb_org);
-  trim(influxdb_bucket);    
-  trim(location);
-
+  Serial.println(wifi_ssid);
+  Serial.println(wifi_password);
   Serial.println(influxdb_url);
   Serial.println(influxdb_token);
   Serial.println(influxdb_org);
   Serial.println(influxdb_bucket);
+  Serial.println(line_token);
   Serial.println(location);
   Serial.println(min_temp, DEC);
   Serial.println(max_temp, DEC);
-  
-
-
 
   return true;
 }

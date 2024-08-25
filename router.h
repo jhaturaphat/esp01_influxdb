@@ -10,6 +10,7 @@ class Router{
   public:
     void begin();
     void wait();
+    String chipID();
 };
 
 
