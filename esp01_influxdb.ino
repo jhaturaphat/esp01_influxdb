@@ -154,6 +154,7 @@ void loop() {
     checkTime();
     checkAlarm();    
   }
+
   
 //  delay(30000); // Wait for 30 seconds before sending the next data
 }
@@ -180,13 +181,11 @@ void checkTime() {
   struct tm* timeInfo = localtime(&now);
 
   // ตรวจสอบว่าเวลาปัจจุบันตรงกับเวลาเป้าหมายหรือไม่
-  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && timeInfo->tm_sec <= 1) {
+  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && (timeInfo->tm_sec < 1 || timeInfo->tm_sec <= 3)) {
     taskAt1600();
-  }
-  if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && timeInfo->tm_sec <= 1) {
+  }else if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && (timeInfo->tm_sec < 1 || timeInfo->tm_sec <= 3)) {
     taskAt0000();
-  }
-  if (timeInfo->tm_hour == 8 && timeInfo->tm_min == 0 && timeInfo->tm_sec <= 1) {
+  }else if (timeInfo->tm_hour == 7 && timeInfo->tm_min == 0 && (timeInfo->tm_sec < 1 || timeInfo->tm_sec <= 3)) {
     taskAt0800();
   }
 }

@@ -3,6 +3,9 @@
 #define DHTPIN 2 //IO02 = D4
 #define DHTTYPE DHT11
 
+const long Previous_restart = 0;
+const long Interval_restart = 1000 * 60 * 60 * (24 * 60);  // 2 เดือน
+
 float humidity        = 0.0;
 float temperature     = 0.0;
 
