@@ -150,11 +150,10 @@ void loop() {
     }   
   }
   if (currentMillis - previousMillis_2 >= interval_2){
-    previousMillis_2 = currentMillis;
-    checkTime();
+    previousMillis_2 = currentMillis;    
     checkAlarm();    
   }
-
+checkTime();
   
 //  delay(30000); // Wait for 30 seconds before sending the next data
 }
@@ -181,26 +180,26 @@ void checkTime() {
   struct tm* timeInfo = localtime(&now);
 
   // ตรวจสอบว่าเวลาปัจจุบันตรงกับเวลาเป้าหมายหรือไม่
-  if (timeInfo->tm_hour == 16 && timeInfo->tm_min == 0 && (timeInfo->tm_sec < 1 || timeInfo->tm_sec <= 3)) {
+  if ((timeInfo->tm_hour == 19) && (timeInfo->tm_min == 0) && (timeInfo->tm_sec == 0)) {
     taskAt1600();
-  }else if (timeInfo->tm_hour == 0 && timeInfo->tm_min == 0 && (timeInfo->tm_sec < 1 || timeInfo->tm_sec <= 3)) {
+  }else if ((timeInfo->tm_hour == 0) && (timeInfo->tm_min == 0) && (timeInfo->tm_sec == 0)) {
     taskAt0000();
-  }else if (timeInfo->tm_hour == 7 && timeInfo->tm_min == 0 && (timeInfo->tm_sec < 1 || timeInfo->tm_sec <= 3)) {
+  }else if ((timeInfo->tm_hour == 7) && (timeInfo->tm_min == 0) && (timeInfo->tm_sec == 0)) {
     taskAt0800();
   }
 }
 
 void taskAt1600() {
   //Serial.println("Task at 16:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n err:"+logs);
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
 }
 
 void taskAt0000() {
   //Serial.println("Task at 00:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n err:"+logs);
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
 }
 void taskAt0800() {
   //Serial.println("Task at 08:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n err:"+logs);
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
 }
 
