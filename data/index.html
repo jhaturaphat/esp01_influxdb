@@ -54,6 +54,12 @@
         .dev-by{
             text-align: center;
         }
+
+        .form-group-line{
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -67,6 +73,10 @@
     <div class="form-group">
         <label for="wifi_password">Wifi PASSWORD</label>
         <input type="text" id="wifi_password">
+    </div>
+    <div class="form-group-line">
+        <label for="influxdb_https">InfluxDB HTTPS</label>
+        <input type="checkbox" name="influxdb_https" id="influxdb_https" checked>
     </div>
     <div class="form-group">
         <label for="influxdb_url">InfluxDB URL</label>
@@ -124,16 +134,17 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                document.getElementById('wifi_ssid').value = data.wifi_ssid;
-                document.getElementById('wifi_password').value = data.wifi_password;
-                document.getElementById('influxdb_url').value = data.influxdb_url;
-                document.getElementById('influxdb_token').value = data.influxdb_token;
-                document.getElementById('influxdb_org').value = data.influxdb_org;
-                document.getElementById('influxdb_bucket').value = data.influxdb_bucket;
-                document.getElementById('location').value = data.location;
-                document.getElementById('line_token').value = data.line_token;
-                document.getElementById('min_temp').value = data.min_temp;
-                document.getElementById('max_temp').value = data.max_temp;
+                document.getElementById('wifi_ssid').value          = data.wifi_ssid;
+                document.getElementById('wifi_password').value      = data.wifi_password;
+                document.getElementById('influxdb_url').value       = data.influxdb_url;
+                document.getElementById('influxdb_token').value     = data.influxdb_token;
+                document.getElementById('influxdb_org').value       = data.influxdb_org;
+                document.getElementById('influxdb_bucket').value    = data.influxdb_bucket;
+                document.getElementById('influxdb_https').checked   = data.influxdb_https === 1 ? true: false;
+                document.getElementById('location').value           = data.location;
+                document.getElementById('line_token').value         = data.line_token;
+                document.getElementById('min_temp').value           = data.min_temp;
+                document.getElementById('max_temp').value           = data.max_temp;
             })
             .catch(error => {
                     console.error('Error:', error);
@@ -143,20 +154,22 @@
     });
     function sendData() {
         // Get values from the form
-        const wifi_ssid = document.getElementById('wifi_ssid').value;
-        const wifi_password = document.getElementById('wifi_password').value;
-        const influxdb_url = document.getElementById('influxdb_url').value;
-        const influxdb_token = document.getElementById('influxdb_token').value;
-        const influxdb_org = document.getElementById('influxdb_org').value;
-        const influxdb_bucket = document.getElementById('influxdb_bucket').value;
-        const location = document.getElementById('location').value;
-        const line_token = document.getElementById('line_token').value;
-        const min_temp = document.getElementById('min_temp').value;
-        const max_temp = document.getElementById('max_temp').value;
+        const wifi_ssid         = document.getElementById('wifi_ssid').value;
+        const wifi_password     = document.getElementById('wifi_password').value;
+        const influxdb_url      = document.getElementById('influxdb_url').value;
+        const influxdb_token    = document.getElementById('influxdb_token').value;
+        const influxdb_org      = document.getElementById('influxdb_org').value;
+        const influxdb_bucket   = document.getElementById('influxdb_bucket').value;
+        const influxdb_https    = document.getElementById('influxdb_https').checked;
+        const location          = document.getElementById('location').value;
+        const line_token        = document.getElementById('line_token').value;
+        const min_temp          = document.getElementById('min_temp').value;
+        const max_temp          = document.getElementById('max_temp').value;
 
         // Construct the URL with query parameters
         const url = `/save?wifi_ssid=${wifi_ssid}
         &wifi_password=${wifi_password}
+        &influxdb_https=${influxdb_https}
         &influxdb_url=${influxdb_url}
         &influxdb_token=${influxdb_token}
         &influxdb_org=${influxdb_org}

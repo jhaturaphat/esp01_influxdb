@@ -53,7 +53,8 @@ void startAP();
 
 // InfluxDB client instance
 InfluxDBClient client;
-Point sensor("DHT11");
+// sensor DHT serial
+Point sensor("DHT11"); 
 
 Router router;
 
@@ -93,18 +94,28 @@ void setup() {
           
           dht.begin();  
           
-          // Check InfluxDB connection
+          // Check InfluxDB connection    
+          // Serial.println();
+          // Serial.println(influxdb_url);     
+          // Serial.println(influxdb_org);    
+          // Serial.println(influxdb_bucket);   
+          // Serial.println(influxdb_token);    
+          if(influxdb_https){
+            client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token, InfluxDbCloud2CACert);
+          }else{
+            client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token);
+          }
+          
           if (client.validateConnection()) {
             Serial.print("Connected to InfluxDB: ");
             Serial.println(client.getServerUrl());
           } else {
             Serial.print("InfluxDB connection failed: ");
             Serial.println(client.getLastErrorMessage());
+            String err = client.getLastErrorMessage();
+            LINE.notify("InfluxDB connection failed:"+err);
           }
           
-         
-          client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token);
-
           LINE.setToken(line_token);  
           String IP = WiFi.localIP().toString();  
           LINE.notify(String(location)+" "+IP);
@@ -121,12 +132,12 @@ void loop() {
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
   
-  if (isnan(humidity) || isnan(temperature)) {
-    Serial.println("ไม่พบ sensor DHT!");
+  if (isnan(humidity) || isnan(temperature)) {    
     // Serial.println(wifi_ssid);  
     // Serial.println(wifi_password);  
     if (currentMillis - previousMillis_3 >= interval_3) {
       previousMillis_3 = currentMillis;
+      Serial.println("ไม่พบ sensor DHT!");
       LINE.notify(String(location)+" ไม่พบ sensor DHT!");
     }
     return; 

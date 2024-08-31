@@ -17,6 +17,7 @@ char* influxdb_url    = nullptr;
 char* influxdb_token  = nullptr;
 char* influxdb_org    = nullptr;
 char* influxdb_bucket = nullptr;
+bool influxdb_https   = true;
 char* location        = nullptr;
 char* line_token      = nullptr;
 int min_temp          = 0;
@@ -81,6 +82,7 @@ bool loadConfig() {
   influxdb_token  = strdup(doc["influxdb_token"]);
   influxdb_org    = strdup(doc["influxdb_org"]);
   influxdb_bucket = strdup(doc["influxdb_bucket"]);
+  influxdb_https  = doc["influxdb_https"];
   line_token      = strdup(doc["line_token"]);
   location        = strdup(doc["location"]);
   min_temp        = doc["min_temp"];
@@ -92,6 +94,7 @@ bool loadConfig() {
   Serial.println(influxdb_token);
   Serial.println(influxdb_org);
   Serial.println(influxdb_bucket);
+  Serial.println(influxdb_https);
   Serial.println(line_token);
   Serial.println(location);
   Serial.println(min_temp, DEC);
