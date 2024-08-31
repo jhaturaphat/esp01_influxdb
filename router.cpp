@@ -85,6 +85,20 @@ void handleSave() {
   }
 }
 
+void Router::modeAP(WiFiClass& wf){
+  // สร้าง Access Point ชื่อ "AutoConnectAP" (ไม่มีรหัสผ่าน)
+    //MDNS.addService("http", "tcp", 80);
+    wf.mode(WIFI_AP);
+    wf.softAP("AP-"+ Router::chipID(), "");
+    delay(100);
+    Serial.println("Access Point started");
+    Router::begin();  //ให้เริ่มการทำงาน
+  if (MDNS.begin("esp8266")) {
+    Serial.println("MDNS responder started");
+  }
+  
+}
+
 String Router::chipID() {
   String chipID = "ESP_123456";
 #ifdef ARDUINO_ARCH_ESP32  //ถ้าเป็น ESP32
@@ -121,6 +135,7 @@ void Router::begin() {
   server.on("/save", HTTP_GET, handleSave);
   server.on("/influx.json", HTTP_GET, handleInflux);
   server.on("/reboot",HTTP_GET, handleReboot);
+  server.onNotFound(handleRoot);
   server.begin();
 }
 

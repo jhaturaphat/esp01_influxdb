@@ -1,13 +1,15 @@
+//For esp 32
 #if defined(ESP32)
 #include <WiFi.h>
 #include <ESPmDNS.h>
 #define DEVICE "ESP32"
+//For Esp 8266
 #elif defined(ESP8266) 
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #define DEVICE "ESP8266"
 #endif
-
+//Global include
 #include "FS.h"
 #include <LittleFS.h>
 #include <time.h>
@@ -33,6 +35,8 @@ const long interval_3 = 20000;       // กำหนด interval เป็น 10
 
 unsigned long startAttemptTime = 0;
 const unsigned long wifiTimeout = 30000; // 10 วินาที (10000 มิลลิวินาที)
+
+bool c_stat = true;
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -61,8 +65,8 @@ void setup() {
   WiFi.begin(wifi_ssid, wifi_password);
   while (WiFi.status() != WL_CONNECTED){
     if (millis() - startAttemptTime >= wifiTimeout) {
-      Serial.println("ไม่สามารถเชื่อมต่อ WiFi ได้ เปลี่ยนไปเป็นโหมด AP");
-      startAP();
+      Serial.println("ไม่สามารถเชื่อมต่อ WiFi ได้ เปลี่ยนไปเป็นโหมด AP");      
+      router.modeAP(WiFi);
       router.begin();
       return;
     }
@@ -106,6 +110,7 @@ void setup() {
           LINE.notify(String(location)+" "+IP);
   
    router.begin();
+
 }
 
 
@@ -146,25 +151,17 @@ void loop() {
   if (!client.writePoint(sensor)) {
     //Serial.print("InfluxDB write failed: ");
     //Serial.println(client.getLastErrorMessage());
-    logs += "InfluxDB write failed:";    
+    logs = "InfluxDB write failed:";    
     }   
   }
   if (currentMillis - previousMillis_2 >= interval_2){
     previousMillis_2 = currentMillis;    
-    checkAlarm();    
+    checkAlarm();  
+    c_stat = true;  
   }
 checkTime();
   
 //  delay(30000); // Wait for 30 seconds before sending the next data
-}
-
-void startAP(){
-  // สร้าง Access Point ชื่อ "AutoConnectAP" (ไม่มีรหัสผ่าน)
-    MDNS.addService("http", "tcp", 80);
-    WiFi.mode(WIFI_AP);
-    WiFi.softAP("esp-"+router.chipID(), "");
-    delay(100);
-    Serial.println("Access Point started");
 }
 
 void checkAlarm() { 
@@ -176,16 +173,24 @@ void checkAlarm() {
 
 
 void checkTime() {
+  if(!c_stat) return;
   time_t now = time(nullptr);
   struct tm* timeInfo = localtime(&now);
+  int tm_hour = timeInfo->tm_hour;
+  int tm_min = timeInfo->tm_min;
+  int tm_sec = timeInfo->tm_sec;
 
-  // ตรวจสอบว่าเวลาปัจจุบันตรงกับเวลาเป้าหมายหรือไม่
-  if ((timeInfo->tm_hour == 19) && (timeInfo->tm_min == 0) && (timeInfo->tm_sec == 0)) {
+  // // ตรวจสอบว่าเวลาปัจจุบันตรงกับเวลาเป้าหมายหรือไม่
+
+  if ((tm_hour == 16) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt1600();
-  }else if ((timeInfo->tm_hour == 0) && (timeInfo->tm_min == 0) && (timeInfo->tm_sec == 0)) {
+    c_stat = false;
+  }else if ((tm_hour == 0) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt0000();
-  }else if ((timeInfo->tm_hour == 7) && (timeInfo->tm_min == 0) && (timeInfo->tm_sec == 0)) {
+    c_stat = false;
+  }else if ((tm_hour == 7) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt0800();
+    c_stat = false;
   }
 }
 
