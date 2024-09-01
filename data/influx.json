@@ -5,7 +5,6 @@
     "influxdb_token": "jUhlBDDwp-qiRhrj1zrPlnO6XGrB517fZoeFFzx3rU3irLCMpEcxUyCEfYd2yZ8iZxFgxI1BphcynG0sJjR9jA==",
     "influxdb_org": "6634b6743ff4b044",
     "influxdb_bucket": "DHT11-SENSOR",
-    "influxdb_https": 1,
     "line_token":"TftxtM2bfiZkqZjEpIbEURIT3gIDtNLGcwdm82QzwX0",
     "location":"ทดสอบ",
     "min_temp": 20,

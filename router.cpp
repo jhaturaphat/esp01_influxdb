@@ -24,7 +24,6 @@ void handleSave() {
       server.hasArg("influxdb_token") && 
       server.hasArg("influxdb_org") && 
       server.hasArg("influxdb_bucket") &&
-      server.hasArg("influxdb_https") &&
       server.hasArg("line_token") &&
       server.hasArg("location") &&
       server.hasArg("min_temp") &&
@@ -35,16 +34,14 @@ void handleSave() {
     String _influxdb_url     = server.arg("influxdb_url");
     String _influxdb_token   = server.arg("influxdb_token");
     String _influxdb_org     = server.arg("influxdb_org");
-    String _influxdb_bucket  = server.arg("influxdb_bucket");
-    String _influxdb_https   = server.arg("influxdb_https");
+    String _influxdb_bucket  = server.arg("influxdb_bucket");    
     String _line_token       = server.arg("line_token");
     String _location         = server.arg("location");
     String _min_temp         = server.arg("min_temp");
     String _max_temp         = server.arg("max_temp");   
 
     _wifi_ssid.replace(" ", "");
-    _wifi_password.replace(" ", "");
-    _influxdb_https.replace(" ", "");
+    _wifi_password.replace(" ", "");    
     _influxdb_url.replace(" ", "");
     _influxdb_token.replace(" ", "");
     _influxdb_org.replace(" ", "");
@@ -63,8 +60,7 @@ void handleSave() {
     doc["influxdb_url"]     = _influxdb_url;
     doc["influxdb_token"]   = _influxdb_token;
     doc["influxdb_org"]     = _influxdb_org;
-    doc["influxdb_bucket"]  = _influxdb_bucket;
-    doc["influxdb_https"]   = _influxdb_https.toInt();
+    doc["influxdb_bucket"]  = _influxdb_bucket;   
     doc["line_token"]       = _line_token;
     doc["location"]         = _location;
     doc["min_temp"]         = _min_temp.toInt();

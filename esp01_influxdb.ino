@@ -100,7 +100,7 @@ void setup() {
           // Serial.println(influxdb_org);    
           // Serial.println(influxdb_bucket);   
           // Serial.println(influxdb_token);    
-          if(influxdb_https){
+          if(String(influxdb_url).startsWith("https")){
             client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token, InfluxDbCloud2CACert);
           }else{
             client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token);
@@ -199,7 +199,7 @@ void checkTime() {
   }else if ((tm_hour == 0) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt0000();
     c_stat = false;
-  }else if ((tm_hour == 7) && (tm_min == 0) && (tm_sec <= 1)) {
+  }else if ((tm_hour == 8) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt0800();
     c_stat = false;
   }
