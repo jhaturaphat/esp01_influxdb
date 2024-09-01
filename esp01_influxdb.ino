@@ -53,7 +53,6 @@ void startAP();
 
 // InfluxDB client instance
 InfluxDBClient client;
-// sensor DHT serial
 Point sensor("DHT11"); 
 
 Router router;
@@ -113,6 +112,7 @@ void setup() {
             Serial.print("InfluxDB connection failed: ");
             Serial.println(client.getLastErrorMessage());
             String err = client.getLastErrorMessage();
+            delay(1000);
             LINE.notify("InfluxDB connection failed:"+err);
           }
           
