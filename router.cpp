@@ -50,8 +50,6 @@ void handleSave() {
     _location.replace(" ", "");
     _min_temp.replace(" ", "");
     _max_temp.replace(" ", "");
-
-    _influxdb_https == "true" ? _influxdb_https = "1" : _influxdb_https = "0";
     
     // สร้าง JSON object และใส่ข้อมูล
     DynamicJsonDocument doc(1024);
