@@ -91,6 +91,10 @@
         <input type="text" id="influxdb_bucket">
     </div>
     <div class="form-group">
+        <label for="influxdb_point">InfluxDB Point</label>
+        <input type="text" id="influxdb_point">
+    </div>
+    <div class="form-group">
         <label for="line_token">Line Token</label>
         <input type="text" id="line_token">
     </div>
@@ -136,6 +140,7 @@
                 document.getElementById('influxdb_token').value     = data.influxdb_token;
                 document.getElementById('influxdb_org').value       = data.influxdb_org;
                 document.getElementById('influxdb_bucket').value    = data.influxdb_bucket;                
+                document.getElementById('influxdb_point').value    = data.influxdb_point;                
                 document.getElementById('location').value           = data.location;
                 document.getElementById('line_token').value         = data.line_token;
                 document.getElementById('min_temp').value           = data.min_temp;
@@ -155,6 +160,7 @@
         const influxdb_token    = document.getElementById('influxdb_token').value;
         const influxdb_org      = document.getElementById('influxdb_org').value;
         const influxdb_bucket   = document.getElementById('influxdb_bucket').value;
+        const influxdb_point    = document.getElementById('influxdb_point').value;
         const location          = document.getElementById('location').value;
         const line_token        = document.getElementById('line_token').value;
         const min_temp          = document.getElementById('min_temp').value;
@@ -167,6 +173,7 @@
         &influxdb_token=${influxdb_token}
         &influxdb_org=${influxdb_org}
         &influxdb_bucket=${influxdb_bucket}
+        &influxdb_point=${influxdb_point}
         &location=${location}
         &line_token=${line_token}
         &min_temp=${min_temp}

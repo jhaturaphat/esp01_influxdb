@@ -1,13 +1,13 @@
 
-// DHT Sensor
-#define DHTPIN 2 //IO02 = D4
-#define DHTTYPE DHT11
-
 const long Previous_restart = 0;
 const long Interval_restart = 1000 * 60 * 60 * (24 * 60);  // 2 เดือน
 
 float humidity        = 0.0;
 float temperature     = 0.0;
+
+// DHT Sensor
+#define DHTPIN 2 //IO02 = D4
+#define DHTTYPE DHT11
 
 String logs = "";
 
@@ -17,6 +17,7 @@ char* influxdb_url    = nullptr;
 char* influxdb_token  = nullptr;
 char* influxdb_org    = nullptr;
 char* influxdb_bucket = nullptr;
+char* influxdb_point  = nullptr;
 char* location        = nullptr;
 char* line_token      = nullptr;
 int min_temp          = 0;
@@ -81,6 +82,7 @@ bool loadConfig() {
   influxdb_token  = strdup(doc["influxdb_token"]);
   influxdb_org    = strdup(doc["influxdb_org"]);
   influxdb_bucket = strdup(doc["influxdb_bucket"]);
+  influxdb_point  = strdup(doc["influxdb_point"]);
   line_token      = strdup(doc["line_token"]);
   location        = strdup(doc["location"]);
   min_temp        = doc["min_temp"];
@@ -92,6 +94,7 @@ bool loadConfig() {
   Serial.println(influxdb_token);
   Serial.println(influxdb_org);
   Serial.println(influxdb_bucket);  
+  Serial.println(influxdb_point);  
   Serial.println(line_token);
   Serial.println(location);
   Serial.println(min_temp, DEC);

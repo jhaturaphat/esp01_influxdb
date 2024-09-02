@@ -98,7 +98,8 @@ void setup() {
           // Serial.println(influxdb_url);     
           // Serial.println(influxdb_org);    
           // Serial.println(influxdb_bucket);   
-          // Serial.println(influxdb_token);    
+          // Serial.println(influxdb_token);  
+          sensor = Point(influxdb_point);
           if(String(influxdb_url).startsWith("https")){
             client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token, InfluxDbCloud2CACert);
           }else{
@@ -178,7 +179,7 @@ checkTime();
 void checkAlarm() { 
     // Check if temperature is out of the range 15-23 degrees Celsius
   if (temperature < min_temp || temperature > max_temp) {    
-    LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 ค่าที่กำหนด"+min_temp+"-"+max_temp+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \n ความชื้นขณะนี้ "+humidity+" %");
+    LINE.notify(WiFi.localIP().toString()+"\n🚨🚨"+String(location)+"🚨🚨\n🌡️ ค่าที่กำหนด"+min_temp+"-"+max_temp+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
   }
 }
 
@@ -207,15 +208,15 @@ void checkTime() {
 
 void taskAt1600() {
   //Serial.println("Task at 16:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
 }
 
 void taskAt0000() {
   //Serial.println("Task at 00:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
 }
 void taskAt0800() {
   //Serial.println("Task at 08:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \nความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
 }
 
