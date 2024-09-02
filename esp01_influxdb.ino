@@ -179,7 +179,7 @@ checkTime();
 void checkAlarm() { 
     // Check if temperature is out of the range 15-23 degrees Celsius
   if (temperature < min_temp || temperature > max_temp) {    
-    LINE.notify(WiFi.localIP().toString()+"\n🚨🚨"+String(location)+"🚨🚨\n🌡️ ค่าที่กำหนด"+min_temp+"-"+max_temp+"\nอุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
+    LINE.notify(WiFi.localIP().toString()+"\n🚨🚨"+String(location)+"🚨🚨\n ค่าที่กำหนด"+min_temp+"-"+max_temp+"\n🌡️อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
   }
 }
 
