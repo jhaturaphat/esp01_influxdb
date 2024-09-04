@@ -5,67 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KID จตุรภัทร</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            margin: 0;
-        }
-        .content {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 700px;
-            height: 100%;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-            font-weight: 600;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        .form-group button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .form-group button:hover {
-            background-color: #45a049;
-        }
-        .dev-by{
-            text-align: center;
-        }
+       /* รีเซ็ตค่าเริ่มต้นของ CSS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        .form-group-line{
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* การจัดการของ h1 */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* การจัดการของ .content */
+.content {
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* การจัดการของ .form-group */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+/* การจัดการของปุ่ม */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+/* การจัดการของ .dev-by */
+.dev-by {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Media Queries สำหรับหน้าจอขนาดเล็กกว่า 768px */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}
+
+/* Media Queries สำหรับหน้าจอขนาดเล็กกว่า 480px */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.2em;
+    }
+
+    .form-group label {
+        font-size: 14px;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="number"] {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+
     </style>
 </head>
 <body>
-    
-<div class="content">
-    <br>
+<h1>WiFi Config</h1>
+<div class="content">    
     <div class="form-group">
         <label for="wifi_ssid">Wifi SSID</label>
         <input type="text" id="wifi_ssid">
@@ -73,7 +130,15 @@
     <div class="form-group">
         <label for="wifi_password">Wifi PASSWORD</label>
         <input type="text" id="wifi_password">
-    </div>    
+    </div>
+    <div class="form-group">
+        <button onclick="saveWificfg()">SAVE</button>
+    </div>
+</div>
+<br>
+<h1>InfluxDB Config</h1>
+<div class="content">
+        
     <div class="form-group">
         <label for="influxdb_url">InfluxDB URL</label>
         <input type="text" id="influxdb_url">
@@ -134,8 +199,8 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                document.getElementById('wifi_ssid').value          = data.wifi_ssid;
-                document.getElementById('wifi_password').value      = data.wifi_password;
+                // document.getElementById('wifi_ssid').value          = data.wifi_ssid;
+                // document.getElementById('wifi_password').value      = data.wifi_password;
                 document.getElementById('influxdb_url').value       = data.influxdb_url;
                 document.getElementById('influxdb_token').value     = data.influxdb_token;
                 document.getElementById('influxdb_org').value       = data.influxdb_org;
@@ -152,10 +217,30 @@
             });
         }, 1000);
     });
-    function sendData() {
+
+    function saveWificfg() {
         // Get values from the form
         const wifi_ssid         = document.getElementById('wifi_ssid').value;
         const wifi_password     = document.getElementById('wifi_password').value;
+        // Construct the URL with query parameters
+        const url = `/wificfg?wifi_ssid=${wifi_ssid}&wifi_password=${wifi_password}`;
+
+        // Send GET request to the server
+        fetch(url)
+            .then(response => response.json())
+            .then(res => {
+                // Handle the response data here
+                console.log(res);                  
+                alert(res.message);              
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(error.message);
+            });
+    }
+
+    function sendData() {
+        // Get values from the form        
         const influxdb_url      = document.getElementById('influxdb_url').value;
         const influxdb_token    = document.getElementById('influxdb_token').value;
         const influxdb_org      = document.getElementById('influxdb_org').value;
@@ -167,9 +252,7 @@
         const max_temp          = document.getElementById('max_temp').value;
 
         // Construct the URL with query parameters
-        const url = `/save?wifi_ssid=${wifi_ssid}
-        &wifi_password=${wifi_password}
-        &influxdb_url=${influxdb_url}
+        const url = `/save?influxdb_url=${influxdb_url}
         &influxdb_token=${influxdb_token}
         &influxdb_org=${influxdb_org}
         &influxdb_bucket=${influxdb_bucket}
@@ -192,6 +275,7 @@
                 alert(error.message);
             });
     }
+
 
     function reboot(){
         fetch("/reboot")

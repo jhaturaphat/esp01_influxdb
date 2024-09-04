@@ -16,11 +16,40 @@ String readFile(const char *path){
   return html;  
 }
 
+void handleWifiCfg(){
+  if (server.hasArg("wifi_ssid") && server.hasArg("wifi_password")){
+    String _wifi_ssid        = server.arg("wifi_ssid");
+    String _wifi_password    = server.arg("wifi_password");
+    _wifi_ssid.replace(" ", "");
+    _wifi_password.replace(" ", ""); 
+
+    DynamicJsonDocument doc(300);
+    doc["wifi_ssid"]        = _wifi_ssid;
+    doc["wifi_password"]    = _wifi_password;
+
+    // เปิดไฟล์เพื่อเขียนข้อมูล
+    File file = LittleFS.open("/wifi.json", "w");
+    if (!file) {
+      String response = "{ \"status\": \"error\", \"message\": \"Failed to open file for writing\" }";
+      server.send(500, "application/json", response);
+      return;
+    }
+
+    // เขียน JSON ลงในไฟล์
+    serializeJson(doc, file);
+    file.close();
+    String response = "{ \"status\": \"success\", \"message\":\"success\" }";
+    server.send(200, "application/json", response);
+
+  }else {
+    String response = "{ \"status\": \"error\", \"message\": \"Wifi Missing parameters\" }";
+    server.send(400, "application/json", response);
+  }
+}
+
 void handleSave() {
   
-  if (server.hasArg("wifi_ssid") &&
-      server.hasArg("wifi_password") &&
-      server.hasArg("influxdb_url") && 
+  if (server.hasArg("influxdb_url") && 
       server.hasArg("influxdb_token") && 
       server.hasArg("influxdb_org") && 
       server.hasArg("influxdb_bucket") &&
@@ -30,8 +59,7 @@ void handleSave() {
       server.hasArg("min_temp") &&
       server.hasArg("max_temp")) {
 
-    String _wifi_ssid        = server.arg("wifi_ssid");
-    String _wifi_password    = server.arg("wifi_password");
+    
     String _influxdb_url     = server.arg("influxdb_url");
     String _influxdb_token   = server.arg("influxdb_token");
     String _influxdb_org     = server.arg("influxdb_org");
@@ -41,9 +69,7 @@ void handleSave() {
     String _location         = server.arg("location");
     String _min_temp         = server.arg("min_temp");
     String _max_temp         = server.arg("max_temp");   
-
-    _wifi_ssid.replace(" ", "");
-    _wifi_password.replace(" ", "");    
+       
     _influxdb_url.replace(" ", "");
     _influxdb_token.replace(" ", "");
     _influxdb_org.replace(" ", "");
@@ -55,9 +81,7 @@ void handleSave() {
     _max_temp.replace(" ", "");
     
     // สร้าง JSON object และใส่ข้อมูล
-    DynamicJsonDocument doc(1024);
-    doc["wifi_ssid"]        = _wifi_ssid;
-    doc["wifi_password"]    = _wifi_password;
+    DynamicJsonDocument doc(1024);    
     doc["influxdb_url"]     = _influxdb_url;
     doc["influxdb_token"]   = _influxdb_token;
     doc["influxdb_org"]     = _influxdb_org;
@@ -115,7 +139,9 @@ String Router::chipID() {
 #endif
   return chipID;
 }
-
+void handleWifi(){
+  server.send(200, "application/json", readFile("/wifi.json"));
+}
 void handleInflux(){
   server.send(200, "application/json", readFile("/influx.json"));
 }
@@ -130,18 +156,16 @@ void handleReboot(){
 }
 
 void Router::begin() {
-//  if(!LittleFS.begin()){
-//    Serial.println("An Error has occurred while mounting LittleFS");
-//   //    return;
-//   }
   server.on("/", handleRoot);
   server.on("/save", HTTP_GET, handleSave);
+  server.on("/wificfg", HTTP_GET, handleWifiCfg);
+  server.on("/wifi.json", HTTP_GET, handleWifi);
   server.on("/influx.json", HTTP_GET, handleInflux);
   server.on("/reboot",HTTP_GET, handleReboot);
   server.onNotFound(handleRoot);
   server.begin();
 }
 
-void Router::wait(){
+void Router::start(){
   server.handleClient();
 }

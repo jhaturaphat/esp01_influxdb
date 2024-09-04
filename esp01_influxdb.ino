@@ -29,14 +29,15 @@
 unsigned long previousMillis_1 = 0;
 unsigned long previousMillis_2 = 0;
 unsigned long previousMillis_3 = 0;
-const long interval_1 = 60000;       // กำหนด interval เป็น 60 วินาที
-const long interval_2 = 60000;       // กำหนด interval เป็น 20 วินาที
-const long interval_3 = 20000;       // กำหนด interval เป็น 10 วินาที
+const long interval_60 = 60000;       // กำหนด interval เป็น 60 วินาที
+const long interval_30 = 30000;       // กำหนด interval เป็น 30 วินาที
+const long interval_20 = 30000;       // กำหนด interval เป็น 20 วินาที
+const long interval_10 = 10000;       // กำหนด interval เป็น 10 วินาที
 
 unsigned long startAttemptTime = 0;
 const unsigned long wifiTimeout = 30000; // 10 วินาที (10000 มิลลิวินาที)
 
-bool c_stat = true;
+bool alarm_stat = true;
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -59,6 +60,7 @@ Router router;
 
 void setup() {  
   Serial.begin(115200); 
+  loadCfgWifi();
   loadConfig();
   startAttemptTime = millis();
   WiFi.mode(WIFI_STA);
@@ -92,13 +94,7 @@ void setup() {
           }
           
           dht.begin();  
-          
-          // Check InfluxDB connection    
-          // Serial.println();
-          // Serial.println(influxdb_url);     
-          // Serial.println(influxdb_org);    
-          // Serial.println(influxdb_bucket);   
-          // Serial.println(influxdb_token);  
+           
           sensor = Point(influxdb_point);
           if(String(influxdb_url).startsWith("https")){
             client.setConnectionParams(influxdb_url, influxdb_org, influxdb_bucket, influxdb_token, InfluxDbCloud2CACert);
@@ -128,7 +124,7 @@ void setup() {
 
 void loop() {
   unsigned long currentMillis = millis();
-  router.wait();    
+  router.start();    
 
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
@@ -136,7 +132,7 @@ void loop() {
   if (isnan(humidity) || isnan(temperature)) {    
     // Serial.println(wifi_ssid);  
     // Serial.println(wifi_password);  
-    if (currentMillis - previousMillis_3 >= interval_3) {
+    if (currentMillis - previousMillis_3 >= interval_10) {
       previousMillis_3 = currentMillis;
       Serial.println("ไม่พบ sensor DHT!");
       LINE.notify(String(location)+" ไม่พบ sensor DHT!");
@@ -146,30 +142,25 @@ void loop() {
   
 
 
-  if (currentMillis - previousMillis_1 >= interval_1) {
+  if (currentMillis - previousMillis_1 >= interval_10) {
     previousMillis_1 = currentMillis;
     // Add data to InfluxDB
-  sensor.clearFields();
-  sensor.addField("temperature", temperature);
-  sensor.addField("humidity", humidity);
-    // Print data to Serial
-    /*
-  Serial.print("Temperature: ");
-  Serial.print(temperature);
-  Serial.print(" °C, Humidity: ");
-  Serial.print(humidity);
-  Serial.println(" %");*/
-  // Write data to InfluxDB
-  if (!client.writePoint(sensor)) {
-    //Serial.print("InfluxDB write failed: ");
-    //Serial.println(client.getLastErrorMessage());
-    logs = "InfluxDB write failed:";    
-    }   
+    sensor.clearFields();
+    sensor.addField("temperature", temperature);
+    sensor.addField("humidity", humidity);    
+      // Write data to InfluxDB
+      if (!client.writePoint(sensor)) {
+        //Serial.print("InfluxDB write failed: ");
+        //Serial.println(client.getLastErrorMessage());
+        logs = "InfluxDB write failed:";    
+      }else{
+        logs = "";
+    }
   }
-  if (currentMillis - previousMillis_2 >= interval_2){
+  if (currentMillis - previousMillis_2 >= interval_30){
     previousMillis_2 = currentMillis;    
     checkAlarm();  
-    c_stat = true;  
+    alarm_stat = true;  //reset ค่า
   }
 checkTime();
   
@@ -185,7 +176,7 @@ void checkAlarm() {
 
 
 void checkTime() {
-  if(!c_stat) return;
+  if(!alarm_stat) return;
   time_t now = time(nullptr);
   struct tm* timeInfo = localtime(&now);
   int tm_hour = timeInfo->tm_hour;
@@ -196,13 +187,13 @@ void checkTime() {
 
   if ((tm_hour == 16) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt1600();
-    c_stat = false;
+    alarm_stat = false;
   }else if ((tm_hour == 0) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt0000();
-    c_stat = false;
+    alarm_stat = false;
   }else if ((tm_hour == 8) && (tm_min == 0) && (tm_sec <= 1)) {
     taskAt0800();
-    c_stat = false;
+    alarm_stat = false;
   }
 }
 

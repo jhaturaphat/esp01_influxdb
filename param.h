@@ -75,9 +75,7 @@ bool loadConfig() {
     Serial.println("Failed to parse JSON");
     return false;
   }
-
-  wifi_ssid       = strdup(doc["wifi_ssid"]);
-  wifi_password   = strdup(doc["wifi_password"]);
+  
   influxdb_url    = strdup(doc["influxdb_url"]);
   influxdb_token  = strdup(doc["influxdb_token"]);
   influxdb_org    = strdup(doc["influxdb_org"]);
@@ -87,9 +85,7 @@ bool loadConfig() {
   location        = strdup(doc["location"]);
   min_temp        = doc["min_temp"];
   max_temp        = doc["max_temp"];
-
-  Serial.println(wifi_ssid);
-  Serial.println(wifi_password);
+  
   Serial.println(influxdb_url);
   Serial.println(influxdb_token);
   Serial.println(influxdb_org);
@@ -99,6 +95,44 @@ bool loadConfig() {
   Serial.println(location);
   Serial.println(min_temp, DEC);
   Serial.println(max_temp, DEC);
+
+  return true;
+}
+
+bool loadCfgWifi() {
+  if(!LittleFS.begin()) Serial.println("LittleFS Mount Failed");
+  
+  File file = LittleFS.open("/wifi.json", "r");
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return false;
+  }
+
+  size_t size = file.size();
+  if (size > 1024) {
+    Serial.println("File size is too large");
+    file.close();
+    return false;
+  }
+
+  std::unique_ptr<char[]> buf(new char[size]);
+  file.readBytes(buf.get(), size);
+  file.close();
+
+  DynamicJsonDocument doc(300);
+  auto error = deserializeJson(doc, buf.get());
+
+  if (error) {
+    Serial.println("Failed to parse JSON");
+    return false;
+  }
+
+  wifi_ssid       = strdup(doc["wifi_ssid"]);
+  wifi_password   = strdup(doc["wifi_password"]);
+  
+
+  Serial.println(wifi_ssid);
+  Serial.println(wifi_password);  
 
   return true;
 }

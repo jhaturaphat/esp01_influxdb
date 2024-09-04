@@ -21,7 +21,7 @@
 class Router{
   public:
     void begin();
-    void wait();
+    void start();
     void modeAP(WiFiClass& wf);
     String chipID();
 };
