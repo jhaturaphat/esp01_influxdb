@@ -13,12 +13,14 @@
 #include "FS.h"
 #include <LittleFS.h>
 #include <time.h>
-#include <WiFiManager.h>
+// #include <WiFiManager.h>
 #include <ArduinoJson.h>
 #include <InfluxDbClient.h>
 #include <InfluxDbCloud.h>
 #include <Adafruit_Sensor.h>
-#include <TridentTD_LineNotify.h>
+// #include <TridentTD_LineNotify.h>
+#include <WiFiClientSecure.h>
+#include <UniversalTelegramBot.h>
 #include <DHT.h>
 #include <DHT_U.h>
 #include "router.h"
@@ -58,6 +60,10 @@ Point sensor("DHT11");
 
 Router router;
 
+const char* BOT_TOKEN = "8099954188:AAGYPRNbmwzUVgmVVERNXj9z2OONFcuwX6w";
+WiFiClientSecure secured_client;
+UniversalTelegramBot bot(BOT_TOKEN, secured_client); // เริ่มต้นด้วย Token ปลอม
+
 void setup() {  
   Serial.begin(115200); 
   loadCfgWifi();
@@ -94,6 +100,18 @@ void setup() {
           }
           
           dht.begin();  
+          // ตั้งค่า Secure Client (จำเป็นสำหรับ HTTPS)
+          #ifdef ESP8266
+            secured_client.setInsecure(); // สำหรับ ESP8266 (ไม่แนะนำใน Production)
+          #elif defined(ESP32)
+            secured_client.setCACert(TELEGRAM_CERTIFICATE_ROOT); // สำหรับ ESP32
+          #endif
+
+           // อัปเดต Token จริงภายหลัง (โหลดจาก EEPROM/Web/ไฟล์)         
+          bot.updateToken(line_token); // เปลี่ยน Token ได้ทันที!
+          // ทดสอบส่งข้อความ
+          bot.sendMessage(chanel, "Bot เริ่มทำงานแล้ว!");
+
            
           sensor = Point(influxdb_point);
           if(String(influxdb_url).startsWith("https")){
@@ -110,12 +128,14 @@ void setup() {
             Serial.println(client.getLastErrorMessage());
             String err = client.getLastErrorMessage();
             delay(1000);
-            LINE.notify("InfluxDB connection failed:"+err);
+            // LINE.notify("InfluxDB connection failed:"+err);
+            bot.sendMessage(chanel, "InfluxDB connection failed:"+err);
           }
           
-          LINE.setToken(line_token);  
+          // LINE.setToken(line_token);  
           String IP = WiFi.localIP().toString();  
-          LINE.notify(String(location)+" "+IP);
+          // LINE.notify(String(location)+" "+IP);
+          bot.sendMessage(chanel, String(location)+" "+IP);
   
    router.begin();
 
@@ -135,7 +155,8 @@ void loop() {
     if (currentMillis - previousMillis_3 >= interval_10) {
       previousMillis_3 = currentMillis;
       Serial.println("ไม่พบ sensor DHT!");
-      LINE.notify(String(location)+" ไม่พบ sensor DHT!");
+      // LINE.notify(String(location)+" ไม่พบ sensor DHT!");
+      bot.sendMessage(chanel, String(location)+" ไม่พบ sensor DHT!");
     }
     return; 
   }
@@ -170,7 +191,8 @@ checkTime();
 void checkAlarm() { 
     // Check if temperature is out of the range 15-23 degrees Celsius
   if (temperature < min_temp || temperature > max_temp) {    
-    LINE.notify(WiFi.localIP().toString()+"\n🚨🚨"+String(location)+"🚨🚨\n ค่าที่กำหนด"+min_temp+"-"+max_temp+"\n🌡️อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
+    // LINE.notify(WiFi.localIP().toString()+"\n🚨🚨"+String(location)+"🚨🚨\n ค่าที่กำหนด"+min_temp+"-"+max_temp+"\n🌡️อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
+    bot.sendMessage(chanel, WiFi.localIP().toString()+"\n🚨🚨"+String(location)+"🚨🚨\n ค่าที่กำหนด"+min_temp+"-"+max_temp+"\n🌡️อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
   }
 }
 
@@ -199,15 +221,18 @@ void checkTime() {
 
 void taskAt1600() {
   //Serial.println("Task at 16:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  // LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  bot.sendMessage(chanel, WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
 }
 
 void taskAt0000() {
   //Serial.println("Task at 00:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  // LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  bot.sendMessage(chanel, WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
 }
 void taskAt0800() {
   //Serial.println("Task at 08:00 executed.");
-  LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  // LINE.notify(WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" % \n error:"+logs);
+  bot.sendMessage(chanel, WiFi.localIP().toString()+"\n"+String(location)+"\n🌡 อุณหภูมิขณะนี้ "+temperature+" องศา \n☔ ความชื้นขณะนี้ "+humidity+" %");
 }
 

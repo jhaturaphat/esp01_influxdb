@@ -55,6 +55,7 @@ void handleSave() {
       server.hasArg("influxdb_bucket") &&
       server.hasArg("influxdb_point") &&
       server.hasArg("line_token") &&
+      server.hasArg("chanel") &&
       server.hasArg("location") &&
       server.hasArg("min_temp") &&
       server.hasArg("max_temp")) {
@@ -64,8 +65,9 @@ void handleSave() {
     String _influxdb_token   = server.arg("influxdb_token");
     String _influxdb_org     = server.arg("influxdb_org");
     String _influxdb_bucket  = server.arg("influxdb_bucket");    
-    String _influxdb_point  = server.arg("influxdb_point");    
+    String _influxdb_point   = server.arg("influxdb_point");    
     String _line_token       = server.arg("line_token");
+    String _chanel           = server.arg("chanel");
     String _location         = server.arg("location");
     String _min_temp         = server.arg("min_temp");
     String _max_temp         = server.arg("max_temp");   
@@ -76,6 +78,7 @@ void handleSave() {
     _influxdb_bucket.replace(" ", "");
     _influxdb_point.replace(" ", "");
     _line_token.replace(" ", "");
+    _chanel.replace(" ", "");
     _location.replace(" ", "");
     _min_temp.replace(" ", "");
     _max_temp.replace(" ", "");
@@ -88,6 +91,7 @@ void handleSave() {
     doc["influxdb_bucket"]  = _influxdb_bucket;   
     doc["influxdb_point"]   = _influxdb_point;   
     doc["line_token"]       = _line_token;
+    doc["chanel"]           = _chanel;
     doc["location"]         = _location;
     doc["min_temp"]         = _min_temp.toInt();
     doc["max_temp"]         = _max_temp.toInt();    

@@ -4,7 +4,8 @@
     "influxdb_org": "6634b6743ff4b044",
     "influxdb_bucket": "SENSOR",
     "influxdb_point": "DHT11",
-    "line_token": "TftxtM2bfiZkqZjEpIbEURIT3gIDtNLGcwdm82QzwX0",
+    "line_token": "8099954188:AAGYPRNbmwzUVgmVVERNXj9z2OONFcuwX6w",
+    "chanel": "-1002650890762",
     "location": "ทดสอบ",
     "min_temp": 20,
     "max_temp": 45

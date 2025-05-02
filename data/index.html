@@ -160,8 +160,12 @@ button:hover {
         <input type="text" id="influxdb_point">
     </div>
     <div class="form-group">
-        <label for="line_token">Line Token</label>
+        <label for="line_token">Telegram Token</label>
         <input type="text" id="line_token">
+    </div>
+    <div class="form-group">
+        <label for="Chanel">Telegram Chanel</label>
+        <input type="text" id="Chanel">
     </div>
     <div class="form-group">
         <label for="location">ที่ตั้ง</label>
@@ -205,9 +209,10 @@ button:hover {
                 document.getElementById('influxdb_token').value     = data.influxdb_token;
                 document.getElementById('influxdb_org').value       = data.influxdb_org;
                 document.getElementById('influxdb_bucket').value    = data.influxdb_bucket;                
-                document.getElementById('influxdb_point').value    = data.influxdb_point;                
+                document.getElementById('influxdb_point').value     = data.influxdb_point;                
                 document.getElementById('location').value           = data.location;
                 document.getElementById('line_token').value         = data.line_token;
+                document.getElementById('chanel').value             = data.chanel;
                 document.getElementById('min_temp').value           = data.min_temp;
                 document.getElementById('max_temp').value           = data.max_temp;
             })
@@ -248,6 +253,7 @@ button:hover {
         const influxdb_point    = document.getElementById('influxdb_point').value;
         const location          = document.getElementById('location').value;
         const line_token        = document.getElementById('line_token').value;
+        const chanel            = document.getElementById('chanel').value;
         const min_temp          = document.getElementById('min_temp').value;
         const max_temp          = document.getElementById('max_temp').value;
 
@@ -259,6 +265,7 @@ button:hover {
         &influxdb_point=${influxdb_point}
         &location=${location}
         &line_token=${line_token}
+        &chanel=${chanel}
         &min_temp=${min_temp}
         &max_temp=${max_temp}`;
 

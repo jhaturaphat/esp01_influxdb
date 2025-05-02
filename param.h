@@ -19,7 +19,8 @@ char* influxdb_org    = nullptr;
 char* influxdb_bucket = nullptr;
 char* influxdb_point  = nullptr;
 char* location        = nullptr;
-char* line_token      = nullptr;
+char* line_token      = "-1002650890762";
+char* chanel          = nullptr;
 int min_temp          = 0;
 int max_temp          = 0;
 
@@ -82,6 +83,7 @@ bool loadConfig() {
   influxdb_bucket = strdup(doc["influxdb_bucket"]);
   influxdb_point  = strdup(doc["influxdb_point"]);
   line_token      = strdup(doc["line_token"]);
+  chanel          = strdup(doc["chanel"]);
   location        = strdup(doc["location"]);
   min_temp        = doc["min_temp"];
   max_temp        = doc["max_temp"];
@@ -92,6 +94,7 @@ bool loadConfig() {
   Serial.println(influxdb_bucket);  
   Serial.println(influxdb_point);  
   Serial.println(line_token);
+  Serial.println(chanel);
   Serial.println(location);
   Serial.println(min_temp, DEC);
   Serial.println(max_temp, DEC);
