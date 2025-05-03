@@ -19,7 +19,7 @@ char* influxdb_org    = nullptr;
 char* influxdb_bucket = nullptr;
 char* influxdb_point  = nullptr;
 char* location        = nullptr;
-char* line_token      = "-1002650890762";
+char* line_token      = nullptr;
 char* chanel          = nullptr;
 int min_temp          = 0;
 int max_temp          = 0;
@@ -54,7 +54,7 @@ bool loadConfig() {
   
   File file = LittleFS.open("/influx.json", "r");
   if (!file) {
-    Serial.println("Failed to open file for reading");
+    // Serial.println("Failed to open file for reading");
     return false;
   }
 
@@ -88,16 +88,16 @@ bool loadConfig() {
   min_temp        = doc["min_temp"];
   max_temp        = doc["max_temp"];
   
-  Serial.println(influxdb_url);
-  Serial.println(influxdb_token);
-  Serial.println(influxdb_org);
-  Serial.println(influxdb_bucket);  
-  Serial.println(influxdb_point);  
-  Serial.println(line_token);
-  Serial.println(chanel);
-  Serial.println(location);
-  Serial.println(min_temp, DEC);
-  Serial.println(max_temp, DEC);
+  // Serial.println(influxdb_url);
+  // Serial.println(influxdb_token);
+  // Serial.println(influxdb_org);
+  // Serial.println(influxdb_bucket);  
+  // Serial.println(influxdb_point);  
+  // Serial.println(line_token);
+  // Serial.println(chanel);
+  // Serial.println(location);
+  // Serial.println(min_temp, DEC);
+  // Serial.println(max_temp, DEC);
 
   return true;
 }
@@ -107,13 +107,13 @@ bool loadCfgWifi() {
   
   File file = LittleFS.open("/wifi.json", "r");
   if (!file) {
-    Serial.println("Failed to open file for reading");
+    // Serial.println("Failed to open file for reading");
     return false;
   }
 
   size_t size = file.size();
   if (size > 1024) {
-    Serial.println("File size is too large");
+    // Serial.println("File size is too large");
     file.close();
     return false;
   }
@@ -126,7 +126,7 @@ bool loadCfgWifi() {
   auto error = deserializeJson(doc, buf.get());
 
   if (error) {
-    Serial.println("Failed to parse JSON");
+    // Serial.println("Failed to parse JSON");
     return false;
   }
 
@@ -134,8 +134,8 @@ bool loadCfgWifi() {
   wifi_password   = strdup(doc["wifi_password"]);
   
 
-  Serial.println(wifi_ssid);
-  Serial.println(wifi_password);  
+  // Serial.println(wifi_ssid);
+  // Serial.println(wifi_password);  
 
   return true;
 }

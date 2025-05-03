@@ -136,6 +136,7 @@ void setup() {
           String IP = WiFi.localIP().toString();  
           // LINE.notify(String(location)+" "+IP);
           bot.sendMessage(chanel, String(location)+" "+IP);
+          Serial.println(String(location)+" "+IP);
   
    router.begin();
 
@@ -154,7 +155,7 @@ void loop() {
     // Serial.println(wifi_password);  
     if (currentMillis - previousMillis_3 >= interval_10) {
       previousMillis_3 = currentMillis;
-      Serial.println("ไม่พบ sensor DHT!");
+      // Serial.println("ไม่พบ sensor DHT!");
       // LINE.notify(String(location)+" ไม่พบ sensor DHT!");
       bot.sendMessage(chanel, String(location)+" ไม่พบ sensor DHT!");
     }

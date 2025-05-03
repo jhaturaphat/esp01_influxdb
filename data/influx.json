@@ -1,12 +1,12 @@
 {
-    "influxdb_url": "https://us-east-1-1.aws.cloud2.influxdata.com",
-    "influxdb_token": "jUhlBDDwp-qiRhrj1zrPlnO6XGrB517fZoeFFzx3rU3irLCMpEcxUyCEfYd2yZ8iZxFgxI1BphcynG0sJjR9jA==",
-    "influxdb_org": "6634b6743ff4b044",
-    "influxdb_bucket": "SENSOR",
-    "influxdb_point": "DHT11",
+    "influxdb_url": "http://192.168.190.5:8086",
+    "influxdb_token": "yPYp1GVX_K2myHqx5ooqZ1UGsCuw1ZzSiAZkG0XtZdaDzJZ6opr-GsuRHzLvhYKyLFGVAiJ-Hv_utApROpg94g==",
+    "influxdb_org": "b1fd2b1c883ab40c",
+    "influxdb_bucket": "server-room",
+    "influxdb_point": "DHT11-DC",
     "line_token": "8099954188:AAGYPRNbmwzUVgmVVERNXj9z2OONFcuwX6w",
     "chanel": "-1002650890762",
-    "location": "ทดสอบ",
+    "location": "Room-DC",
     "min_temp": 20,
     "max_temp": 45
 }
