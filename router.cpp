@@ -118,12 +118,11 @@ void handleSave() {
 
 void Router::modeAP(WiFiClass& wf){
   // สร้าง Access Point ชื่อ "AutoConnectAP" (ไม่มีรหัสผ่าน)
-    //MDNS.addService("http", "tcp", 80);
+    MDNS.addService("http", "tcp", 80);
     wf.mode(WIFI_AP);
     wf.softAP("AP-"+ Router::chipID(), "");
     delay(100);
-    Serial.println("Access Point started");
-    Router::begin();  //ให้เริ่มการทำงาน
+    Serial.println("Access Point started");    
   if (MDNS.begin("esp8266")) {
     Serial.println("MDNS responder started");
   }

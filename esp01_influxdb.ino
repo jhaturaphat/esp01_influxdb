@@ -138,7 +138,7 @@ void setup() {
           bot.sendMessage(chanel, String(location)+" "+IP);
           Serial.println(String(location)+" "+IP);
   
-   router.begin();
+   router.begin();   
 
 }
 
@@ -147,6 +147,8 @@ void loop() {
   unsigned long currentMillis = millis();
   router.start();    
 
+if (WiFi.getMode() == WIFI_AP) return;
+  
   humidity = dht.readHumidity();
   temperature = dht.readTemperature();
   
